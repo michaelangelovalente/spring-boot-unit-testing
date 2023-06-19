@@ -35,7 +35,8 @@ public class MockAnnotationTest {
 //    @InjectMocks
 //    private ApplicationService applicationService;
 
-    @MockBean // provides mocking functionality + adds the bean to the application context
+    @MockBean // provides mocking functionality
+    // + adds the bean to the application context
     private ApplicationDao applicationDao;
 
     @Autowired // since it is in the application context the bean will be injected in the applicationo context
