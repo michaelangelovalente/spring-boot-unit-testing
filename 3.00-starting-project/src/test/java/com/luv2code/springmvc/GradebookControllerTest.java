@@ -66,7 +66,7 @@ public class GradebookControllerTest {
     }
 
     @Test
-    public void getSTudentHttpRequest() throws Exception {
+    public void getStudentHttpRequest() throws Exception {
         CollegeStudent studentOne = new GradebookCollegeStudent("Eric", "Roby", "eric@gmail.com" );
         CollegeStudent studentTwo = new GradebookCollegeStudent("Chad", "Darby", "chad@gmail.com");
 
@@ -88,6 +88,16 @@ public class GradebookControllerTest {
 
     @Test
     public void createStudentHttpRequest() throws Exception {
+
+        CollegeStudent studentOne = new CollegeStudent("Eric",
+                "Roby", "eric@gmail.com");
+
+        List<CollegeStudent> collegeStudentList = new ArrayList<>(Arrays.asList(studentOne));
+
+        when(studentCreateServiceMock.getGradebook()).thenReturn(collegeStudentList);
+
+        assertIterableEquals(collegeStudentList, studentCreateServiceMock.getGradebook());
+
         MvcResult mvcResult = this.mockMvc.perform(post("/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .param("firstname", mockHttpServletRequest.getParameterValues("firstname"))
