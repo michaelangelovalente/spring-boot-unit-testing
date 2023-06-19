@@ -2,8 +2,10 @@ package com.luv2code.springmvc;
 
 import com.luv2code.springmvc.models.CollegeStudent;
 import com.luv2code.springmvc.models.GradebookCollegeStudent;
+import com.luv2code.springmvc.repository.StudentDao;
 import com.luv2code.springmvc.service.StudentAndGradeService;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -11,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.batch.BatchProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.ModelAndViewAssert;
 import org.springframework.test.web.servlet.MockMvc;
@@ -24,13 +28,17 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @TestPropertySource("/application.properties")
 @AutoConfigureMockMvc
 @SpringBootTest
 public class GradebookControllerTest {
+
+    private static MockHttpServletRequest mockHttpServletRequest;
 
     @Autowired
     private JdbcTemplate jdbc;
@@ -41,6 +49,16 @@ public class GradebookControllerTest {
     @Mock
     private StudentAndGradeService studentAndGradeServiceMock;
 
+    @Autowired
+    private StudentDao studentDao;
+
+    @BeforeAll
+    public static void setup(){
+        mockHttpServletRequest = new MockHttpServletRequest();
+        mockHttpServletRequest.setParameter("firstname", "Chad");
+        mockHttpServletRequest.setParameter("lastname", "Darby");
+        mockHttpServletRequest.setParameter("emailAddress", "chad@gmail.com");
+    }
     @BeforeEach
     public void beforeEach(){
         jdbc.execute("INSERT INTO student(id, firstname, lastname, email_address)" +
@@ -68,6 +86,24 @@ public class GradebookControllerTest {
         ModelAndViewAssert.assertViewName(mav, "index");
     }
 
+    @Test
+    public void createStudentHttpRequest() throws Exception {
+        MvcResult mvcResult = this.mockMvc.perform(post("/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .param("firstname", mockHttpServletRequest.getParameterValues("firstname"))
+                .param("lastname", mockHttpServletRequest.getParameterValues("lastname"))
+                .param("emailAddress", mockHttpServletRequest.getParameterValues("emailAddress")))
+                .andExpect(status().isOk()).andReturn();
+
+        ModelAndView mav = mvcResult.getModelAndView();
+
+        CollegeStudent verifyStudent = studentDao
+                .findByEmailAddress("chad@gmail.com");
+
+        assertNotNull(verifyStudent, "Student should be found");
+
+
+    }
     @AfterEach
     public void setupAfterTransaction(){
         jdbc.execute("DELETE FROM student;");

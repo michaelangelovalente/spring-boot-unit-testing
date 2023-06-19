@@ -23,6 +23,13 @@ public class GradebookController {
         return "index";
     }
 
+    @PostMapping("/")
+    public String createStudent(@ModelAttribute("student") CollegeStudent collegeStudent, Model model){
+        studentAndGradeService.createStudent(collegeStudent.getFirstname(), collegeStudent.getFirstname(),
+                collegeStudent.getEmailAddress());
+        return "index";
+    }
+
 
     @GetMapping("/studentInformation/{id}")
     public String studentInformation(@PathVariable int id, Model m) {
