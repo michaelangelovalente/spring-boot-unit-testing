@@ -25,7 +25,7 @@ public class GradebookController {
 
     @PostMapping("/")
     public String createStudent(@ModelAttribute("student") CollegeStudent collegeStudent, Model model){
-        studentAndGradeService.createStudent(collegeStudent.getFirstname(), collegeStudent.getFirstname(),
+        studentAndGradeService.createStudent(collegeStudent.getFirstname(), collegeStudent.getLastname(),
                 collegeStudent.getEmailAddress());
         //after we create a student get a list of students and add as model attribute
         Iterable<CollegeStudent> collegeStudents = studentAndGradeService.getGradebook();
