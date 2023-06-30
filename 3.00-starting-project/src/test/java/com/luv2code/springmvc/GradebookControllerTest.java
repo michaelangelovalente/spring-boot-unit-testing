@@ -10,7 +10,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.batch.BatchProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -27,8 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertIterableEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -114,6 +112,25 @@ public class GradebookControllerTest {
 
 
     }
+
+    @Test
+    public void deleteStudentHttpRequest() throws Exception{
+        assertTrue(studentDao.findById(1).isPresent()); // we assert that this student exists --> aka sanity-check
+
+        //TODO: convert to a delete request using ajax https://roytuts.com/spring-boot-jquery-ajax-crud-example/
+        MvcResult mvcResult = mockMvc.perform( MockMvcRequestBuilders
+                .get("/delete/student/{id}", 1))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        ModelAndView mav = mvcResult.getModelAndView();
+
+        assert mav != null;
+        ModelAndViewAssert.assertViewName(mav, "index");
+        assertFalse(studentDao.findById(1).isPresent());
+
+    }
+
     @AfterEach
     public void setupAfterTransaction(){
         jdbc.execute("DELETE FROM student;");
