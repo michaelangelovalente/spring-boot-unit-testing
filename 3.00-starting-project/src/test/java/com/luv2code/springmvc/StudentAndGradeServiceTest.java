@@ -1,6 +1,8 @@
 package com.luv2code.springmvc;
 
 import com.luv2code.springmvc.models.CollegeStudent;
+import com.luv2code.springmvc.models.MathGrade;
+import com.luv2code.springmvc.repository.MathGradesDao;
 import com.luv2code.springmvc.repository.StudentDao;
 import com.luv2code.springmvc.service.StudentAndGradeService;
 import org.junit.jupiter.api.AfterEach;
@@ -31,6 +33,11 @@ public class StudentAndGradeServiceTest {
 
     @Autowired
     StudentDao studentDao;
+
+    @Autowired
+    MathGradesDao mathGradesDao;
+
+
     @BeforeEach
     public void setUpDatabase(){ //h2 sample data
         jdbc.execute("INSERT INTO student(id, firstname, lastname, email_address)" +
@@ -77,6 +84,19 @@ public class StudentAndGradeServiceTest {
         assertEquals(5, collegeStudents.size());
     }
 
+
+    @Test
+    public void createGradeService(){
+        // Create the grade
+        assertTrue(studentService.createGrade(80.5, 1, "math"));
+
+        // Get all grades with studentId
+        Iterable<MathGrade> mathGrades = mathGradesDao.findGradeByStudentId(1);
+
+        // Verify there are grades
+        assertTrue(mathGrades.iterator().hasNext(), "Student has math grades");
+
+    }
     @AfterEach
     public void setupAfterTransaction(){
         jdbc.execute("DELETE FROM student;");
