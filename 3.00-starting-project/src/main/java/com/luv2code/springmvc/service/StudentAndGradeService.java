@@ -1,8 +1,10 @@
 package com.luv2code.springmvc.service;
 
 import com.luv2code.springmvc.models.CollegeStudent;
+import com.luv2code.springmvc.models.HistoryGrade;
 import com.luv2code.springmvc.models.MathGrade;
 import com.luv2code.springmvc.models.ScienceGrade;
+import com.luv2code.springmvc.repository.HistoryGradesDao;
 import com.luv2code.springmvc.repository.MathGradesDao;
 import com.luv2code.springmvc.repository.ScienceGradesDao;
 import com.luv2code.springmvc.repository.StudentDao;
@@ -28,12 +30,19 @@ public class StudentAndGradeService {
     @Qualifier("scienceGrades")
     private ScienceGrade scienceGrade;
 
+    @Autowired
+    @Qualifier("historyGrades")
+    private HistoryGrade historyGrade;
+
 
     @Autowired
     private MathGradesDao mathGradeDao;
 
     @Autowired
     private ScienceGradesDao scienceGradesDao;
+
+    @Autowired
+    private HistoryGradesDao historyGradesDao;
 
 
     public void createStudent(String firstname, String lastname, String emailAddress){
@@ -81,6 +90,15 @@ public class StudentAndGradeService {
                 scienceGrade.setGrade(grade);
                 scienceGrade.setStudentId(studentId);
                 scienceGradesDao.save(scienceGrade);
+                return true;
+            }
+
+
+            if( gradeType.equals("history")){
+                historyGrade.setId(0);
+                historyGrade.setGrade(grade);
+                historyGrade.setStudentId(studentId);
+                historyGradesDao.save(historyGrade);
                 return true;
             }
         }
