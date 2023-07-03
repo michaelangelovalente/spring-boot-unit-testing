@@ -22,7 +22,7 @@ public class StudentAndGradeService {
 
     }
 
-    public boolean checkIfStudentIsNull(Integer id){
+    public Boolean checkIfStudentIsNull(Integer id){
         Optional<CollegeStudent> student = studentDao.findById(id);
         if( student.isPresent()){
             return true;

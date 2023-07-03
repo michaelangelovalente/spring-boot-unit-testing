@@ -131,6 +131,19 @@ public class GradebookControllerTest {
 
     }
 
+    @Test
+    public void deleteStudentHttpRequestErrorPage() throws Exception {
+        MvcResult mvcResult = mockMvc.perform( MockMvcRequestBuilders
+                .get("/delete/student/{id}", -1))
+                .andExpect(status().isOk())
+                .andReturn();
+        ModelAndView mav = mvcResult.getModelAndView();
+
+        ModelAndViewAssert.assertViewName(mav, "error");
+
+    }
+
+
     @AfterEach
     public void setupAfterTransaction(){
         jdbc.execute("DELETE FROM student;");
