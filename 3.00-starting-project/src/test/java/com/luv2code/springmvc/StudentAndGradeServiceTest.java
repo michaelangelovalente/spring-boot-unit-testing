@@ -115,6 +115,22 @@ public class StudentAndGradeServiceTest {
         assertTrue(historyGrades.iterator().hasNext(), "Student has history grades");
 
     }
+
+
+    //Invalid grade: --> Should fail if grade is not between 0 and 100. Should fail if student id does not exist
+    //Should fail if invalid subject
+    @Test
+    public void createGradeServiceReturnFalse(){
+        assertFalse(studentService.createGrade(105.0, 1, "math"));
+        assertFalse(studentService.createGrade(-5.5, 1, "math"));
+
+        //invalid student id
+        assertFalse(studentService.createGrade(80.50, 2, "math"));
+        //invalid subject
+        assertFalse(studentService.createGrade(80.50, 1, "literature"));
+
+    }
+
     @AfterEach
     public void setupAfterTransaction(){
         jdbc.execute("DELETE FROM student;");
