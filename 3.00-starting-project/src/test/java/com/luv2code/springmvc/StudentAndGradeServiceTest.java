@@ -19,6 +19,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,6 +55,13 @@ public class StudentAndGradeServiceTest {
     public void setUpDatabase(){ //h2 sample data
         jdbc.execute("INSERT INTO student(id, firstname, lastname, email_address)" +
                 "values(1, 'Eric', 'Roby', 'eric@gmail.com');");
+
+        jdbc.execute("INSERT INTO math_grade(id, student_id,  grade) VALUES(1, 1, 100.0)");
+
+        jdbc.execute("INSERT INTO science_grade(id, student_id, grade) VALUES(1, 1, 100.0)");
+
+        jdbc.execute("INSERT INTO  history_grade(id, student_id, grade) VALUES(1, 1, 100.0)");
+
     }
     @Test
     public void createStudentService(){
@@ -133,6 +141,11 @@ public class StudentAndGradeServiceTest {
 
     @AfterEach
     public void setupAfterTransaction(){
-        jdbc.execute("DELETE FROM student;");
+        ArrayList<String> vals = new ArrayList<>(Arrays.asList("student", "history_grade", "science_grade", "math_grade"));
+        for( String value : vals ){
+            jdbc.execute("DELETE FROM ".concat(value).concat(";"));
+        }
+
+
     }
 }
