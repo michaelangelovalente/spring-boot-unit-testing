@@ -18,10 +18,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -47,7 +44,6 @@ public class StudentAndGradeServiceTest {
 
     @Autowired
     HistoryGradesDao historyGradesDao;
-
 
 
 
@@ -118,9 +114,9 @@ public class StudentAndGradeServiceTest {
         Iterable<HistoryGrade> historyGrades = historyGradesDao.findGradeByStudentId(1);
 
         // Verify there are grades
-        assertTrue(mathGrades.iterator().hasNext(), "Student has math grades");
-        assertTrue(scienceGrades.iterator().hasNext(), "Student has science grades");
-        assertTrue(historyGrades.iterator().hasNext(), "Student has history grades");
+        assertEquals(2, ((Collection<MathGrade>) mathGrades).size(), "Student has math grades");
+        assertEquals(2, ((Collection<ScienceGrade>)scienceGrades).size(), "Student has science grades");
+        assertEquals(2, ((Collection<HistoryGrade>)historyGrades).size(), "Student has history grades");
 
     }
 
@@ -143,7 +139,8 @@ public class StudentAndGradeServiceTest {
     public void setupAfterTransaction(){
         ArrayList<String> vals = new ArrayList<>(Arrays.asList("student", "history_grade", "science_grade", "math_grade"));
         for( String value : vals ){
-            jdbc.execute("DELETE FROM ".concat(value).concat(";"));
+            String query = "DELETE FROM ".concat(value).concat(";");
+            jdbc.execute(query);
         }
 
 
