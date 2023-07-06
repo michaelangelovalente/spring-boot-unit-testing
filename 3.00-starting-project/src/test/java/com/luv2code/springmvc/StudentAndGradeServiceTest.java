@@ -135,6 +135,21 @@ public class StudentAndGradeServiceTest {
 
     }
 
+
+    @Test
+    public void deleteGradeService(){
+        //delete grade by grade id and grade type
+        assertEquals(1, studentService.deleteGrade(1, "math"),
+                "Returns student id after delete");
+
+        assertEquals(1, studentService.deleteGrade(1, "science"),
+                "Returns student id after delete");
+
+        assertEquals(1, studentService.deleteGrade(1, "history"),
+                "Returns student id after delete");
+
+    }
+
     @AfterEach
     public void setupAfterTransaction(){
         ArrayList<String> vals = new ArrayList<>(Arrays.asList("student", "history_grade", "science_grade", "math_grade"));
