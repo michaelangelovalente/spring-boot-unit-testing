@@ -150,6 +150,26 @@ public class StudentAndGradeServiceTest {
 
     }
 
+
+    //check invalid cases grade deletion for invalid subject and grade id
+    @Test
+    public void deleteGradeServiceReturnStudentIdOfZero(){
+
+        assertEquals(0, studentService.deleteGrade(0, "math"),
+                "No student should  have 0 id");
+
+        assertEquals(0, studentService.deleteGrade(0 , "science"),
+                "No student should have 0 id");
+
+        assertEquals(0, studentService.deleteGrade(0, "history"),
+                "No student should have 0 id");
+
+        //valid id invalid subject
+        assertEquals(0, studentService.deleteGrade(1, "literature"),
+                "No student should have a literature class");
+
+    }
+
     @AfterEach
     public void setupAfterTransaction(){
         ArrayList<String> vals = new ArrayList<>(Arrays.asList("student", "history_grade", "science_grade", "math_grade"));
