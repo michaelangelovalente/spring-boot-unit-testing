@@ -79,14 +79,36 @@ public class StudentAndGradeServiceTest {
     @Test
     public void deleteStudentService(){
         Optional<CollegeStudent> deletedCollegeStudent = studentDao.findById(1);
-        assertTrue(deletedCollegeStudent.isPresent(), "Return True");
 
-        studentService.deleteStudent(1);
+        //student deletion should have collateral --> grade associated w/ student should be deleted
+        Optional<MathGrade> deleteMathGrade = mathGradesDao.findById(1);
+        Optional<HistoryGrade> deleteHistoryGrade = historyGradesDao.findById(1);
+        Optional<ScienceGrade> deleteScienceGrade = scienceGradesDao.findById(1);
+
+        assertTrue(deletedCollegeStudent.isPresent(), "Return True");
+        assertTrue(deleteHistoryGrade.isPresent());
+        assertTrue(deleteMathGrade.isPresent());
+        assertTrue(deleteScienceGrade.isPresent());
+
+
+
+        studentService.deleteStudent(1);//actual deletion shoul happen here--> collateral from student deletion
+
 
 
         deletedCollegeStudent = studentDao.findById(1);
+        //check if collateral has been done
+        deleteMathGrade = mathGradesDao.findById(1);
+        deleteHistoryGrade = historyGradesDao.findById(1);
+        deleteScienceGrade = scienceGradesDao.findById(1);
 
         assertFalse( deletedCollegeStudent.isPresent(), "Return False");
+        assertFalse( deleteMathGrade.isPresent() );
+        assertFalse( deleteHistoryGrade.isPresent());
+        assertFalse( deleteScienceGrade.isPresent());
+
+
+
     }
 
     @Sql("/insertData.sql")

@@ -6,4 +6,6 @@ import org.springframework.data.repository.CrudRepository;
 public interface MathGradesDao extends CrudRepository<MathGrade, Integer> {
 
     public Iterable<MathGrade> findGradeByStudentId(Integer id);
+
+    public void deleteByStudentId(Integer id);
 }

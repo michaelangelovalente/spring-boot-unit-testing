@@ -6,4 +6,5 @@ import org.springframework.data.repository.CrudRepository;
 public interface HistoryGradesDao extends CrudRepository<HistoryGrade, Integer> {
     public Iterable<HistoryGrade> findGradeByStudentId(Integer id);
 
+    public void deleteByStudentId(Integer id);
 }
