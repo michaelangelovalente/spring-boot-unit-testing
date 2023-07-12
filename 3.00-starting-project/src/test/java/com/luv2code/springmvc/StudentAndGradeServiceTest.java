@@ -206,6 +206,14 @@ public class StudentAndGradeServiceTest {
         assertEquals(1, gradebookCollegeStudent.getStudentGrades().getScienceGradeResults().size());
     }
 
+
+
+    @Test
+    public void studentInformationReturnNull(){
+        GradebookCollegeStudent gradebookCollegeStudent = studentService.studentInformation(0);
+
+        assertNull( gradebookCollegeStudent);
+    }
     @AfterEach
     public void setupAfterTransaction(){
         ArrayList<String> vals = new ArrayList<>(Arrays.asList("student", "history_grade", "science_grade", "math_grade"));
