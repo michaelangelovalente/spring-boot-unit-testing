@@ -10,6 +10,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.TestPropertySource;
@@ -43,17 +44,40 @@ public class StudentAndGradeServiceTest {
     HistoryGradesDao historyGradesDao;
 
 
+    @Value("${sql.scripts.create.student}")
+    private String sqlAddStudent;
+
+    @Value("${sql.scripts.create.math.grade}")
+    private String sqlAddMathGrade;
+
+    @Value("${sql.scripts.create.science.grade}")
+    private String sqlAddScienceGrade;
+
+    @Value("${sql.scripts.create.history.grade}")
+    private String sqlAddHistoryGrade;
+
+
+
+    @Value("${sql.scripts.delete.student}")
+    private String sqlDeleteStudent;
+
+    @Value("${sql.scripts.delete.history.grade}")
+    private String sqlDeleteHistoryGrade;
+
+    @Value("${sql.scripts.delete.science.grade}")
+    private String sqlDeleteScienceGrade;
+
+    @Value("${sql.scripts.delete.math.grade}")
+    private String sqlDeleteMathGrade;
+
+
 
     @BeforeEach
     public void setUpDatabase(){ //h2 sample data
-        jdbc.execute("INSERT INTO student(id, firstname, lastname, email_address)" +
-                "values(1, 'Eric', 'Roby', 'eric@gmail.com');");
-
-        jdbc.execute("INSERT INTO math_grade(id, student_id,  grade) VALUES(1, 1, 100.0)");
-
-        jdbc.execute("INSERT INTO science_grade(id, student_id, grade) VALUES(1, 1, 100.0)");
-
-        jdbc.execute("INSERT INTO  history_grade(id, student_id, grade) VALUES(1, 1, 100.0)");
+        jdbc.execute(sqlAddStudent);
+        jdbc.execute(sqlAddMathGrade);
+        jdbc.execute(sqlAddHistoryGrade);
+        jdbc.execute(sqlAddScienceGrade);
 
     }
     @Test
@@ -216,12 +240,11 @@ public class StudentAndGradeServiceTest {
     }
     @AfterEach
     public void setupAfterTransaction(){
-        ArrayList<String> vals = new ArrayList<>(Arrays.asList("student", "history_grade", "science_grade", "math_grade"));
-        for( String value : vals ){
-            String query = "DELETE FROM ".concat(value).concat(";");
-            jdbc.execute(query);
-        }
 
+        jdbc.execute(sqlDeleteStudent);
+        jdbc.execute(sqlDeleteHistoryGrade);
+        jdbc.execute(sqlDeleteScienceGrade);
+        jdbc.execute(sqlDeleteMathGrade);
 
     }
 }
