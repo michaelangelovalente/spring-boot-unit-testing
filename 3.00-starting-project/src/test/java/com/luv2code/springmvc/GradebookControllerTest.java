@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -50,6 +51,36 @@ public class GradebookControllerTest {
     @Autowired
     private StudentDao studentDao;
 
+
+
+    @Value("${sql.scripts.create.student}")
+    private String sqlAddStudent;
+
+    @Value("${sql.scripts.create.math.grade}")
+    private String sqlAddMathGrade;
+
+    @Value("${sql.scripts.create.science.grade}")
+    private String sqlAddScienceGrade;
+
+    @Value("${sql.scripts.create.history.grade}")
+    private String sqlAddHistoryGrade;
+
+
+
+    @Value("${sql.scripts.delete.student}")
+    private String sqlDeleteStudent;
+
+    @Value("${sql.scripts.delete.history.grade}")
+    private String sqlDeleteHistoryGrade;
+
+    @Value("${sql.scripts.delete.science.grade}")
+    private String sqlDeleteScienceGrade;
+
+    @Value("${sql.scripts.delete.math.grade}")
+    private String sqlDeleteMathGrade;
+
+
+
     @BeforeAll
     public static void setup(){
         mockHttpServletRequest = new MockHttpServletRequest();
@@ -59,8 +90,10 @@ public class GradebookControllerTest {
     }
     @BeforeEach
     public void beforeEach(){
-        jdbc.execute("INSERT INTO student(id, firstname, lastname, email_address)" +
-                "values(1, 'Eric', 'Roby', ' eric@gmail.com');");
+        jdbc.execute(sqlAddStudent);
+        jdbc.execute(sqlAddMathGrade);
+        jdbc.execute(sqlAddHistoryGrade);
+        jdbc.execute(sqlAddScienceGrade);
     }
 
     @Test
@@ -146,6 +179,9 @@ public class GradebookControllerTest {
 
     @AfterEach
     public void setupAfterTransaction(){
-        jdbc.execute("DELETE FROM student;");
+        jdbc.execute(sqlDeleteStudent);
+        jdbc.execute(sqlDeleteHistoryGrade);
+        jdbc.execute(sqlDeleteScienceGrade);
+        jdbc.execute(sqlDeleteMathGrade);
     }
 }
