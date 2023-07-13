@@ -176,6 +176,32 @@ public class GradebookControllerTest {
 
     }
 
+    //valid studentId --> returns studentiInforamtion
+    @Test
+    public void studentInformationHttpRequest() throws Exception {
+        assertTrue(studentDao.findById(1).isPresent());
+        //httpRequest
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/studentInformation/{id}", 1))
+                .andExpect(status().isOk()).andReturn();
+
+        ModelAndView mav = mvcResult.getModelAndView();
+        assert mav != null;
+        ModelAndViewAssert.assertViewName(mav,"studentInformation");
+
+    };
+
+    //invalid studentId --> returns error
+    @Test
+    public void studentInformationHttpRequestStudentDoesNotExistRequest() throws Exception{
+        assertFalse(studentDao.findById(0).isPresent());
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/studentInformation/{id}", 0))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        ModelAndView mav = mvcResult.getModelAndView();
+        assert  mav != null;
+        ModelAndViewAssert.assertViewName(mav, "error");
+    }
 
     @AfterEach
     public void setupAfterTransaction(){
