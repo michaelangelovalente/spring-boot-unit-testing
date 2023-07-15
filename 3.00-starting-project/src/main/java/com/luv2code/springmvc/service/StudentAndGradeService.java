@@ -145,34 +145,32 @@ public class StudentAndGradeService {
     }
 
 
-    public GradebookCollegeStudent studentInformation(Integer id) {
-
-        if( !checkIfStudentIsNull(id)) return  null;
+    public GradebookCollegeStudent studentInformation(int id) {
+        if( !studentDao.findById(id).isPresent()) return null;
         Optional<CollegeStudent> student = studentDao.findById(id);
+
         Iterable<MathGrade> mathGrades = mathGradeDao.findGradeByStudentId(id);
+
         Iterable<ScienceGrade> scienceGrades = scienceGradesDao.findGradeByStudentId(id);
+
         Iterable<HistoryGrade> historyGrades = historyGradesDao.findGradeByStudentId(id);
 
         List<Grade> mathGradesList = new ArrayList<>();
         mathGrades.forEach(mathGradesList::add);
 
-        List<Grade> historyGradesList = new ArrayList<>();
-        historyGrades.forEach(historyGradesList::add);
-
         List<Grade> scienceGradesList = new ArrayList<>();
         scienceGrades.forEach(scienceGradesList::add);
 
-        studentGrades.setMathGradeResults(mathGradesList);
-        studentGrades.setHistoryGradeResults(historyGradesList);
-        studentGrades.setScienceGradeResults(scienceGradesList);
+        List<Grade> historyGradesList = new ArrayList<>();
+        historyGrades.forEach(historyGradesList::add);
 
-        GradebookCollegeStudent gradebookCollegeStudent = new GradebookCollegeStudent(
-                student.get().getId(),
-                student.get().getFirstname(),
-                student.get().getLastname(),
-                student.get().getEmailAddress(),
-                studentGrades
-                );
+
+        studentGrades.setMathGradeResults(mathGradesList);
+        studentGrades.setScienceGradeResults(scienceGradesList);
+        studentGrades.setHistoryGradeResults(historyGradesList);
+
+        GradebookCollegeStudent gradebookCollegeStudent = new GradebookCollegeStudent(student.get().getId(), student.get().getFirstname(), student.get().getLastname(),
+                student.get().getEmailAddress(), studentGrades);
 
         return gradebookCollegeStudent;
     }
@@ -182,7 +180,7 @@ public class StudentAndGradeService {
         GradebookCollegeStudent studentEntity = this.studentInformation(id);
         m.addAttribute("student", studentEntity);
 
-        if (!studentEntity.getStudentGrades().getMathGradeResults().isEmpty()) {
+        if (studentEntity !=null && studentEntity.getStudentGrades().getMathGradeResults().size() > 0) {
             m.addAttribute("mathAverage", studentEntity.getStudentGrades().findGradePointAverage(
                     studentEntity.getStudentGrades().getMathGradeResults()
             ));
@@ -190,7 +188,7 @@ public class StudentAndGradeService {
             m.addAttribute("mathAverage", "N/A");
         }
 
-        if (!studentEntity.getStudentGrades().getHistoryGradeResults().isEmpty()) {
+        if (studentEntity!=null && studentEntity.getStudentGrades().getHistoryGradeResults().size() > 0) {
             m.addAttribute("historyAverage", studentEntity.getStudentGrades().findGradePointAverage(
                     studentEntity.getStudentGrades().getHistoryGradeResults()
             ));
@@ -199,7 +197,7 @@ public class StudentAndGradeService {
             m.addAttribute("historyAverage", "N/A");
         }
 
-        if (!studentEntity.getStudentGrades().getScienceGradeResults().isEmpty()) {
+        if (studentEntity!=null && studentEntity.getStudentGrades().getScienceGradeResults().size() > 0) {
             m.addAttribute("scienceAverage", "N/A");
         } else {
             m.addAttribute("scienceAverage", "N/A");
