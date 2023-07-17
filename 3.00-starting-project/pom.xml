@@ -58,6 +58,13 @@
 			<scope>runtime</scope>
 		</dependency>
 
+<!--		&lt;!&ndash; mariadb java connector &ndash;&gt;-->
+<!--		<dependency>-->
+<!--			<groupId>org.mariadb.jdbc</groupId>-->
+<!--			<artifactId>mariadb-java-client</artifactId>-->
+<!--			<version>3.1.4</version>-->
+<!--		</dependency>-->
+
 	</dependencies>
 
 	<build>
