@@ -21,11 +21,16 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.awt.*;
+
+import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @TestPropertySource("/application-test.properties")
 @AutoConfigureMockMvc
@@ -121,8 +126,41 @@ public class GradebookControllerTest {
 
 
 
+    @Test
+    void getStudentsHttpRequest() throws Exception {
+
+        //add a student directly using the entity manager.
+        collegeStudent.setFirstname("Chad");
+        collegeStudent.setLastname("Darby");
+        collegeStudent.setEmailAddress("chad@gmail.com");
+        entityManager.persist(collegeStudent);
+        entityManager.flush();
+
+        //jpa entity manager --> saves it to the db
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$", hasSize(2)));
+    }
 
 
+    @Test
+    void createStudentHttpRequest() throws Exception{
+        collegeStudent.setFirstname("Chad");
+        collegeStudent.setLastname("Darby");
+        collegeStudent.setEmailAddress("chad@gmail.com");
+
+        mockMvc.perform(post("/")
+                .contentType(APPLICATION_JSON_UTF8)
+                .content(objectMapper.writeValueAsString(collegeStudent)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)));
+
+        //double verification --> search for student that was just created
+        CollegeStudent verifyStudent = studentDao.findByEmailAddress("chad@gmail.com");
+        assertNotNull(verifyStudent, "Student should be valid.");
+    }
 
     @AfterEach
     void setupAfterTransaction(){
