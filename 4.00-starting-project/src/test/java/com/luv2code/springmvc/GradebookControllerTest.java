@@ -29,8 +29,10 @@ import javax.persistence.PersistenceContext;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.hamcrest.Matchers.is;
 
 @TestPropertySource("/application-test.properties")
 @AutoConfigureMockMvc
@@ -166,12 +168,23 @@ public class GradebookControllerTest {
     void deleteStudentHttpRequest() throws Exception{
         assertTrue(studentDao.findById(1).isPresent());
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/student/{id}", 1))
+        mockMvc.perform(delete("/student/{id}", 1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$", hasSize(0)));
 
         assertFalse(studentDao.findById(1).isPresent());
+    }
+
+    @Test
+    void deleteStudentHttpRequestErrorPage() throws Exception{
+        assertFalse(studentDao.findById(0).isPresent());
+
+        mockMvc.perform(delete("/student/{id}", 0))
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.status", is(404)))
+                .andExpect(jsonPath("$.message", is("Student or Grade was not found")));
+
     }
 
     @AfterEach
