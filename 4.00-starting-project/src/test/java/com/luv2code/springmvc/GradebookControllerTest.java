@@ -27,6 +27,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import java.util.Optional;
+
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -176,6 +178,8 @@ public class GradebookControllerTest {
         assertFalse(studentDao.findById(1).isPresent());
     }
 
+
+
     @Test
     void deleteStudentHttpRequestErrorPage() throws Exception{
         assertFalse(studentDao.findById(0).isPresent());
@@ -187,6 +191,30 @@ public class GradebookControllerTest {
 
     }
 
+    /**
+     *
+     *
+     sql.script.create.student=insert into student(id,firstname,lastname,email_address) \
+     values (1,'Eric', 'Roby', 'eric.roby@luv2code_school.com')
+     sql.script.create.math.grade=insert into math_grade(id,student_id,grade) values (1,1,100.00)
+     sql.script.create.science.grade=insert into science_grade(id,student_id,grade) values (1,1,100.00)
+     sql.script.create.history.grade=insert into history_grade(id,student_id,grade) values (1,1,100.00)
+     *
+     */
+
+    @Test
+    void studentInformationHttpRequest() throws Exception{
+        Optional<CollegeStudent> student = studentDao.findById(1);
+        assertTrue(student.isPresent());
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/studentInformation/{id}", 1))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.firstname", is("Eric")))
+                .andExpect(jsonPath("$.lastname", is("Roby")))
+                .andExpect(jsonPath("$.emailAddress", is("eric.roby@luv2code_school.com")));
+    }
     @AfterEach
     void setupAfterTransaction(){
         jdbc.execute(sqlDeleteStudent);
