@@ -265,7 +265,7 @@ public class GradebookControllerTest {
         this.mockMvc.perform(post("/grades")
                 .contentType(APPLICATION_JSON_UTF8)
                 .param("grade", "85.00")
-                .param("gradeType", "literature")
+                .param("gradeType", "literature") // invalid gradetype
                 .param("studentId", "1"))
                     .andExpect(status().is4xxClientError())
                     .andExpect(jsonPath("$.status", is(404)))
